@@ -9,7 +9,10 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
+from functools import lru_cache
 from pathlib import Path
+
+from ragevals.text import TermStats
 
 # --- cleaning rules -----------------------------------------------------------------------------
 
@@ -71,3 +74,9 @@ def load_corpus(root: Path) -> list[Document]:
         )
         documents.append(Document(source=path.relative_to(root).as_posix(), title=title, text=text))
     return documents
+
+
+@lru_cache(maxsize=4)
+def corpus_stats(root: Path) -> TermStats:
+    """Document frequencies over the corpus pages (for IDF weighting). Cached per directory."""
+    return TermStats.from_texts(d.text for d in load_corpus(root))

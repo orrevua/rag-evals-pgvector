@@ -89,3 +89,22 @@ class PgVectorStore:
                 (np.asarray(query_embedding), collection, np.asarray(query_embedding), k),
             ).fetchall()
         return [RetrievedChunk(*row) for row in rows]
+
+    def keyword_search(self, collection: str, question: str, k: int) -> list[RetrievedChunk]:
+        """Full-text search with Postgres ``tsvector``; score = ``ts_rank`` (higher is better).
+
+        ``plainto_tsquery`` ANDs every word ("default & valu & skip & limit"), which returns
+        nothing for most natural-language questions. Rewriting ``&`` to ``|`` turns it into an
+        OR query, and ``ts_rank`` then rewards chunks that match more (and rarer) words.
+        """
+        with self.pool.connection() as conn:
+            rows = conn.execute(
+                "WITH q AS (SELECT replace(plainto_tsquery('english', %s)::text, '&', '|')"
+                "::tsquery AS query)"
+                " SELECT chunk_key, source, heading, content, ts_rank(tsv, q.query, 1) AS score"
+                " FROM chunks, q"
+                " WHERE collection = %s AND tsv @@ q.query"
+                " ORDER BY score DESC, chunk_key LIMIT %s",
+                (question, collection, k),
+            ).fetchall()
+        return [RetrievedChunk(*row) for row in rows]

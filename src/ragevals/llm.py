@@ -302,11 +302,10 @@ def llm_provider() -> str:
 def get_generator(provider: str | None = None) -> Generator:
     provider = (provider or llm_provider()).lower()
     if provider == "fake":
-        from ragevals.corpus import load_corpus
+        from ragevals.corpus import corpus_stats
         from ragevals.settings import get_settings
 
-        documents = load_corpus(get_settings().corpus_dir)
-        return ExtractiveGenerator(TermStats.from_texts(d.text for d in documents))
+        return ExtractiveGenerator(corpus_stats(get_settings().corpus_dir))
     if provider == "anthropic":
         return AnthropicGenerator()
     raise ValueError(f"Unknown LLM_PROVIDER {provider!r} (expected fake or anthropic)")

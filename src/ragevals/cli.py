@@ -8,11 +8,12 @@ from contextlib import contextmanager
 import typer
 
 from ragevals.configs import CONFIGS, get_config
+from ragevals.corpus import corpus_stats
 from ragevals.db import ensure_database, make_pool, migrate
 from ragevals.embeddings import get_embedder
 from ragevals.evals.dataset import load_golden
 from ragevals.evals.judge import get_judge
-from ragevals.evals.report import render_markdown, write_report
+from ragevals.evals.report import render_markdown, render_results, write_report
 from ragevals.evals.runner import run_eval
 from ragevals.ingest import ingest as run_ingest
 from ragevals.llm import get_generator
@@ -67,8 +68,15 @@ def ask(
     show_context: bool = typer.Option(False, help="Also print the retrieved chunks"),
 ) -> None:
     """Answer one question from the command line."""
+    settings = get_settings()
     with open_store() as store:
-        pipeline = build_pipeline(get_config(config), store, get_embedder(), get_generator())
+        pipeline = build_pipeline(
+            get_config(config),
+            store,
+            get_embedder(),
+            get_generator(),
+            corpus_stats(settings.corpus_dir),
+        )
         answer = pipeline.answer(question)
     typer.echo(json.dumps(answer.to_dict(include_retrieved=show_context), indent=2))
 
@@ -79,7 +87,9 @@ def run_and_write(config_name: str, judge_kind: str, limit: int | None) -> dict:
     embedder = get_embedder()
     with open_store() as store:
         config = get_config(config_name)
-        pipeline = build_pipeline(config, store, embedder, get_generator())
+        pipeline = build_pipeline(
+            config, store, embedder, get_generator(), corpus_stats(settings.corpus_dir)
+        )
         report = run_eval(pipeline, items, get_judge(judge_kind), embedder.name)
     json_path, md_path = write_report(report, settings.reports_dir)
     typer.echo(f"wrote {json_path} and {md_path}")
@@ -95,6 +105,18 @@ def eval_(
     """Evaluate one config on evals/golden.jsonl; writes reports/<config>.json and .md."""
     report = run_and_write(config, judge, limit)
     typer.echo(render_markdown(report).split("## By question type")[0])
+
+
+@app.command("eval-all")
+def eval_all(
+    judge: str = typer.Option("auto", help="auto | offline | anthropic"),
+) -> None:
+    """Evaluate every config and write reports/RESULTS.md comparing them to the baseline."""
+    reports = [run_and_write(name, judge, None) for name in CONFIGS]
+    path = get_settings().reports_dir / "RESULTS.md"
+    path.write_text(render_results(reports), encoding="utf-8")
+    typer.echo(f"wrote {path}")
+    typer.echo(path.read_text(encoding="utf-8"))
 
 
 if __name__ == "__main__":

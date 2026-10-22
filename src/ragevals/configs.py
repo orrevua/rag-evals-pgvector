@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from ragevals.chunking import Chunker, FixedSizeChunker
+from ragevals.chunking import Chunker, FixedSizeChunker, MarkdownHeadingChunker
 from ragevals.embeddings import Embedder
 
 
@@ -28,6 +28,28 @@ CONFIGS: dict[str, PipelineConfig] = {
         name="baseline",
         description="Fixed 800-char chunks, pgvector cosine top-5",
     ),
+    "hybrid": PipelineConfig(
+        name="hybrid",
+        description="Baseline + Postgres full-text search, fused with RRF",
+        retrieval="hybrid",
+    ),
+    "rerank": PipelineConfig(
+        name="rerank",
+        description="Baseline + rerank 20 vector candidates down to 5",
+        reranker="lexical",
+    ),
+    "structured": PipelineConfig(
+        name="structured",
+        description="Baseline with structure-aware chunks (one per Markdown section)",
+        chunker="markdown",
+    ),
+    "combined": PipelineConfig(
+        name="combined",
+        description="Structure-aware chunks + hybrid retrieval + rerank",
+        chunker="markdown",
+        retrieval="hybrid",
+        reranker="lexical",
+    ),
 }
 
 
@@ -41,6 +63,8 @@ def get_config(name: str) -> PipelineConfig:
 def make_chunker(kind: str) -> Chunker:
     if kind == "fixed":
         return FixedSizeChunker(size=800, overlap=100)
+    if kind == "markdown":
+        return MarkdownHeadingChunker(max_chars=1500, min_chars=250)
     raise ValueError(f"Unknown chunker {kind!r}")
 
 

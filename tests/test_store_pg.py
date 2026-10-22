@@ -45,3 +45,29 @@ def test_replace_collection_is_idempotent(pg_pool, collection_name):
     finally:
         store.drop_collection(collection_name)
     assert store.count(collection_name) == 0
+
+
+def test_keyword_search_uses_or_semantics_and_stemming(pg_pool, collection_name):
+    store, _ = seed(pg_pool, collection_name)
+    try:
+        # "signing" stems to "sign" and matches "signed"; "unicorn" matches nothing but does not
+        # turn the whole query into a miss, because the query is OR-ed.
+        hits = store.keyword_search(collection_name, "signing unicorn tokens", k=3)
+        assert [h.source for h in hits] == ["b.md"]
+        assert store.keyword_search(collection_name, "the and of", k=3) == []
+    finally:
+        store.drop_collection(collection_name)
+
+
+def test_hybrid_retriever_end_to_end(pg_pool, collection_name):
+    from ragevals.retrieval import HybridRetriever, KeywordRetriever, VectorRetriever
+
+    store, emb = seed(pg_pool, collection_name)
+    try:
+        retriever = HybridRetriever(
+            VectorRetriever(store, emb, collection_name), KeywordRetriever(store, collection_name)
+        )
+        hits = retriever.retrieve("CORS allowed origins", k=2)
+        assert hits[0].source == "c.md"
+    finally:
+        store.drop_collection(collection_name)

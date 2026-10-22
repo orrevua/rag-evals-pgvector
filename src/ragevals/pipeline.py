@@ -9,8 +9,16 @@ from dataclasses import asdict, dataclass, field
 from ragevals.configs import PipelineConfig, collection_name
 from ragevals.embeddings import Embedder
 from ragevals.llm import Generation, Generator, Usage
-from ragevals.retrieval import Retriever, VectorRetriever
+from ragevals.rerank import get_reranker
+from ragevals.retrieval import (
+    HybridRetriever,
+    KeywordRetriever,
+    RerankingRetriever,
+    Retriever,
+    VectorRetriever,
+)
 from ragevals.store import PgVectorStore, RetrievedChunk
+from ragevals.text import TermStats
 
 
 @dataclass
@@ -123,14 +131,34 @@ class RagPipeline:
                 yield item
 
 
-def build_retriever(config: PipelineConfig, store: PgVectorStore, embedder: Embedder) -> Retriever:
+def build_retriever(
+    config: PipelineConfig,
+    store: PgVectorStore,
+    embedder: Embedder,
+    stats: TermStats | None = None,
+) -> Retriever:
     collection = collection_name(config, embedder)
+    vector = VectorRetriever(store, embedder, collection)
+    retriever: Retriever
     if config.retrieval == "vector":
-        return VectorRetriever(store, embedder, collection)
-    raise ValueError(f"Unknown retrieval strategy {config.retrieval!r}")
+        retriever = vector
+    elif config.retrieval == "hybrid":
+        retriever = HybridRetriever(vector, KeywordRetriever(store, collection), config.candidates)
+    else:
+        raise ValueError(f"Unknown retrieval strategy {config.retrieval!r}")
+    if config.reranker:
+        retriever = RerankingRetriever(
+            retriever, get_reranker(config.reranker, stats), config.candidates
+        )
+    return retriever
 
 
 def build_pipeline(
-    config: PipelineConfig, store: PgVectorStore, embedder: Embedder, generator: Generator
+    config: PipelineConfig,
+    store: PgVectorStore,
+    embedder: Embedder,
+    generator: Generator,
+    stats: TermStats | None = None,
 ) -> RagPipeline:
-    return RagPipeline(config, build_retriever(config, store, embedder), generator)
+    """``stats`` (corpus IDF, see ``corpus.corpus_stats``) feeds the lexical reranker."""
+    return RagPipeline(config, build_retriever(config, store, embedder, stats), generator)

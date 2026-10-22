@@ -1,0 +1,1331 @@
+{
+  "config": {
+    "name": "structured",
+    "description": "Baseline with structure-aware chunks (one per Markdown section)",
+    "chunker": "markdown",
+    "retrieval": "vector",
+    "reranker": null,
+    "k": 5,
+    "candidates": 20
+  },
+  "embedder": "hash512",
+  "generator": "fake-extractive",
+  "judge": "offline:key-fact-recall",
+  "k": 5,
+  "summary": {
+    "n": 40,
+    "answerable": {
+      "n": 34,
+      "hit_rate@5": 1.0,
+      "recall@5": 0.951,
+      "mrr": 0.9363,
+      "evidence@5": 0.9706,
+      "correctness": 0.5074,
+      "key_fact_recall": 0.5074,
+      "token_f1": 0.2197
+    },
+    "by_type": {
+      "single": {
+        "n": 28,
+        "hit_rate@5": 1.0,
+        "recall@5": 0.9821,
+        "mrr": 0.9405,
+        "evidence@5": 1.0,
+        "correctness": 0.5298,
+        "key_fact_recall": 0.5298,
+        "token_f1": 0.2143
+      },
+      "multi_hop": {
+        "n": 6,
+        "hit_rate@5": 1.0,
+        "recall@5": 0.8056,
+        "mrr": 0.9167,
+        "evidence@5": 0.8333,
+        "correctness": 0.4028,
+        "key_fact_recall": 0.4028,
+        "token_f1": 0.2445
+      }
+    },
+    "refusal": {
+      "accuracy": 0.875,
+      "unanswerable_refused": "5/6",
+      "answerable_refused": "4/34"
+    },
+    "cost_usd": 0.0
+  },
+  "items": [
+    {
+      "id": "s01",
+      "type": "single",
+      "question": "In the query parameters tutorial, what are the default values of skip and limit?",
+      "answer": "`skip`, an `int` with a default value of `0`. [1] In the example above they have default values of `skip=0` and `limit=10`. [4] would be the same as going to: http://127.0.0.1:8000/items/?skip=0&limit=10 [4]",
+      "refused": false,
+      "should_refuse": false,
+      "refusal_correct": true,
+      "retrieved": [
+        "query-params.md > Query Parameters > Required query parameters",
+        "query-params-str-validations.md > Query Parameters and String Validations > Default values",
+        "query-params-str-validations.md > Query Parameters and String Validations > Query parameter list / multiple values > Query parameter list / multiple values with defaults",
+        "query-params.md > Query Parameters > Defaults",
+        "query-params.md > Query Parameters > Optional parameters"
+      ],
+      "expected_sources": [
+        "query-params.md"
+      ],
+      "usage": {
+        "model": "fake",
+        "input_tokens": 446,
+        "output_tokens": 51,
+        "cost_usd": 0.0
+      },
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "rr": 1.0,
+      "evidence@5": 1.0,
+      "key_fact_recall": 1.0,
+      "token_f1": 0.4680851063829787,
+      "correctness": 1.0,
+      "judge_reason": "found 2/2 key facts"
+    },
+    {
+      "id": "s02",
+      "type": "single",
+      "question": "What happens when a bool query parameter receives an empty or unrecognized value such as ?short=maybe?",
+      "answer": "or any other case variation (uppercase, first letter in uppercase, etc), your function will see the parameter `short` with a `bool` value of `True`. [1] If `short` is omitted, **FastAPI** uses its default value, which is `False` in this example. [1] An empty value (`?short=`) or an unrecognized value (for example, `?short=maybe`) produces a `422` validation error. [1]",
+      "refused": false,
+      "should_refuse": false,
+      "refusal_correct": true,
+      "retrieved": [
+        "query-params.md > Query Parameters > Query parameter type conversion",
+        "query-params-str-validations.md > Query Parameters and String Validations > Query parameter list / multiple values",
+        "query-params-str-validations.md > Query Parameters and String Validations > Default values",
+        "query-params-str-validations.md > Query Parameters and String Validations > Query parameter list / multiple values > Query parameter list / multiple values with defaults",
+        "query-params.md > Query Parameters > Optional parameters"
+      ],
+      "expected_sources": [
+        "query-params.md"
+      ],
+      "usage": {
+        "model": "fake",
+        "input_tokens": 708,
+        "output_tokens": 92,
+        "cost_usd": 0.0
+      },
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "rr": 1.0,
+      "evidence@5": 1.0,
+      "key_fact_recall": 1.0,
+      "token_f1": 0.19047619047619047,
+      "correctness": 1.0,
+      "judge_reason": "found 2/2 key facts"
+    },
+    {
+      "id": "s03",
+      "type": "single",
+      "question": "How can I limit an optional query parameter q to a maximum of 50 characters?",
+      "answer": "But now, having `Query(max_length=50)` inside of `Annotated`, we are telling FastAPI that we want it to have **additional validation** for this value, we want it to have maximum 50 characters. 😎 [2] FastAPI will now: **Validate** the data making sure that the max length is 50 characters [2] **Validate** the data making sure that the max length is 50 characters [2]",
+      "refused": false,
+      "should_refuse": false,
+      "refusal_correct": true,
+      "retrieved": [
+        "query-params.md > Query Parameters > Optional parameters",
+        "query-params-str-validations.md > Query Parameters and String Validations > Add `Query` to `Annotated` in the `q` parameter",
+        "query-params.md > Query Parameters > Required query parameters",
+        "dependencies/classes-as-dependencies.md > Classes as Dependencies > Classes as dependencies",
+        "query-param-models.md > Query Parameter Models > Query Parameters with a Pydantic Model"
+      ],
+      "expected_sources": [
+        "query-params-str-validations.md"
+      ],
+      "usage": {
+        "model": "fake",
+        "input_tokens": 547,
+        "output_tokens": 91,
+        "cost_usd": 0.0
+      },
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "rr": 0.5,
+      "evidence@5": 1.0,
+      "key_fact_recall": 1.0,
+      "token_f1": 0.23880597014925373,
+      "correctness": 1.0,
+      "judge_reason": "found 2/2 key facts"
+    },
+    {
+      "id": "s04",
+      "type": "single",
+      "question": "Which Pydantic tool does the tutorial use for custom validation of a query parameter?",
+      "answer": "To exclude a query parameter from the generated OpenAPI schema (and thus, from the automatic documentation systems), set the parameter `include_in_schema` of `Query` to `False`: There could be cases where you need to do some **custom validation** that can't be done with the parameters shown above. [2] There could be cases where you need to do some **custom validation** that can't be done with the parameters shown above. [2] For example, this custom validator checks that the item ID starts with `isbn-` for an ISBN book number or with `imdb-` for an IMDB movie URL ID: This is available with Pydantic version 2 or above. 😎 [2]",
+      "refused": false,
+      "should_refuse": false,
+      "refusal_correct": true,
+      "retrieved": [
+        "query-param-models.md > Query Parameter Models > Query Parameters with a Pydantic Model",
+        "query-params-str-validations.md > Query Parameters and String Validations > Custom Validation",
+        "query-param-models.md > Query Parameter Models",
+        "query-params-str-validations.md > Query Parameters and String Validations > Custom Validation > Understand that Code",
+        "query-params-str-validations.md > Query Parameters and String Validations > Alias parameters"
+      ],
+      "expected_sources": [
+        "query-params-str-validations.md"
+      ],
+      "usage": {
+        "model": "fake",
+        "input_tokens": 641,
+        "output_tokens": 157,
+        "cost_usd": 0.0
+      },
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "rr": 0.5,
+      "evidence@5": 1.0,
+      "key_fact_recall": 0.0,
+      "token_f1": 0.04081632653061225,
+      "correctness": 0.0,
+      "judge_reason": "found 0/2 key facts; missing: AfterValidator, Annotated"
+    },
+    {
+      "id": "s05",
+      "type": "single",
+      "question": "How do I declare a query parameter that accepts multiple values, like ?q=foo&q=bar?",
+      "answer": "the default of `q` will be: `[\"foo\", \"bar\"]` and your response will be: { [1] Then, with a URL like: http://localhost:8000/items/?q=foo&q=bar [2] you would receive the multiple `q` *query parameters'* values (`foo` and `bar`) in a Python `list` inside your *path operation function*, in the *function parameter* `q`. [2]",
+      "refused": false,
+      "should_refuse": false,
+      "refusal_correct": true,
+      "retrieved": [
+        "query-params-str-validations.md > Query Parameters and String Validations > Query parameter list / multiple values > Query parameter list / multiple values with defaults",
+        "query-params-str-validations.md > Query Parameters and String Validations > Query parameter list / multiple values",
+        "query-params-str-validations.md > Query Parameters and String Validations > Required parameters",
+        "body-multiple-params.md > Body - Multiple Parameters > Multiple body params and query",
+        "query-params.md > Query Parameters > Optional parameters"
+      ],
+      "expected_sources": [
+        "query-params-str-validations.md"
+      ],
+      "usage": {
+        "model": "fake",
+        "input_tokens": 644,
+        "output_tokens": 80,
+        "cost_usd": 0.0
+      },
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "rr": 1.0,
+      "evidence@5": 1.0,
+      "key_fact_recall": 0.6666666666666666,
+      "token_f1": 0.16129032258064516,
+      "correctness": 0.6666666666666666,
+      "judge_reason": "found 2/3 key facts; missing: request body"
+    },
+    {
+      "id": "s06",
+      "type": "single",
+      "question": "Why must the path operation for /users/me be declared before /users/{user_id}?",
+      "answer": "And then you can also have a path `/users/{user_id}` to get data about a specific user by some user ID. [1] Because *path operations* are evaluated in order, you need to make sure that the path for `/users/me` is declared before the one for `/users/{user_id}`: Otherwise, the path for `/users/{user_id}` would match also for `/users/me`, \"thinking\" that it's receiving a parameter `user_id` with a value of `\"me\"`. [1] Otherwise, the path for `/users/{user_id}` would match also for `/users/me`, \"thinking\" that it's receiving a parameter `user_id` with a value of `\"me\"`. [1]",
+      "refused": false,
+      "should_refuse": false,
+      "refusal_correct": true,
+      "retrieved": [
+        "path-params.md > Path Parameters > Order matters",
+        "security/get-current-user.md > Get Current User",
+        "security/get-current-user.md > Get Current User > Create a `get_current_user` dependency",
+        "security/simple-oauth2.md > Simple OAuth2 with Password and Bearer > See it in action > Inactive user",
+        "bigger-applications.md > Bigger Applications - Multiple Files > `APIRouter`"
+      ],
+      "expected_sources": [
+        "path-params.md"
+      ],
+      "usage": {
+        "model": "fake",
+        "input_tokens": 568,
+        "output_tokens": 144,
+        "cost_usd": 0.0
+      },
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "rr": 1.0,
+      "evidence@5": 1.0,
+      "key_fact_recall": 1.0,
+      "token_f1": 0.38095238095238093,
+      "correctness": 1.0,
+      "judge_reason": "found 2/2 key facts"
+    },
+    {
+      "id": "s07",
+      "type": "single",
+      "question": "How can a path parameter contain a whole file path such as home/johndoe/myfile.txt?",
+      "answer": "But you need `file_path` itself to contain a *path*, like `home/johndoe/myfile.txt`. [1] So, the URL for that file would be something like: `/files/home/johndoe/myfile.txt`. [1] So, you can use it with: You might need the parameter to contain `/home/johndoe/myfile.txt`, with a leading slash (`/`). [2]",
+      "refused": false,
+      "should_refuse": false,
+      "refusal_correct": true,
+      "retrieved": [
+        "path-params.md > Path Parameters > Path parameters containing paths",
+        "path-params.md > Path Parameters > Path parameters containing paths > Path convertor",
+        "path-params.md > Path Parameters > Path parameters containing paths > OpenAPI support",
+        "request-files.md > Request Files > Define `File` Parameters",
+        "path-operation-configuration.md > Path Operation Configuration"
+      ],
+      "expected_sources": [
+        "path-params.md"
+      ],
+      "usage": {
+        "model": "fake",
+        "input_tokens": 620,
+        "output_tokens": 75,
+        "cost_usd": 0.0
+      },
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "rr": 1.0,
+      "evidence@5": 1.0,
+      "key_fact_recall": 0.0,
+      "token_f1": 0.18518518518518517,
+      "correctness": 0.0,
+      "judge_reason": "found 0/1 key facts; missing: file_path:path"
+    },
+    {
+      "id": "s08",
+      "type": "single",
+      "question": "What does ge=1 mean when validating a path parameter with Path?",
+      "answer": "In the same way that you can declare more validations and metadata for query parameters with `Query`, you can declare the same type of validations and metadata for path parameters with `Path`. [1] Make sure you Upgrade the FastAPI version to at least 0.95.1 before using `Annotated`. [1] Here, with `ge=1`, `item_id` will need to be an integer number \"`g`reater than or `e`qual\" to `1`. [5]",
+      "refused": false,
+      "should_refuse": false,
+      "refusal_correct": true,
+      "retrieved": [
+        "path-params-numeric-validations.md > Path Parameters and Numeric Validations > Import `Path`",
+        "path-params-numeric-validations.md > Path Parameters and Numeric Validations > Declare metadata",
+        "path-params.md > Path Parameters > Path parameters containing paths",
+        "path-params.md > Path Parameters > Predefined values > Declare a *path parameter*",
+        "path-params-numeric-validations.md > Path Parameters and Numeric Validations > Number validations: greater than or equal"
+      ],
+      "expected_sources": [
+        "path-params-numeric-validations.md"
+      ],
+      "usage": {
+        "model": "fake",
+        "input_tokens": 496,
+        "output_tokens": 97,
+        "cost_usd": 0.0
+      },
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "rr": 1.0,
+      "evidence@5": 1.0,
+      "key_fact_recall": 0.0,
+      "token_f1": 0.11764705882352941,
+      "correctness": 0.0,
+      "judge_reason": "found 0/1 key facts; missing: greater than or equal"
+    },
+    {
+      "id": "s09",
+      "type": "single",
+      "question": "Which HTTP methods should you use to send a request body, and is a body with GET recommended?",
+      "answer": "I don't know based on the FastAPI tutorial docs.",
+      "refused": true,
+      "should_refuse": false,
+      "refusal_correct": false,
+      "retrieved": [
+        "body.md > Request Body",
+        "body.md > Request Body > Request body + path parameters",
+        "body-multiple-params.md > Body - Multiple Parameters > Mix `Path`, `Query` and body parameters",
+        "body.md > Request Body > Request body + path + query parameters",
+        "request-files.md > Request Files > What is \"Form Data\""
+      ],
+      "expected_sources": [
+        "body.md"
+      ],
+      "usage": {
+        "model": "fake",
+        "input_tokens": 1042,
+        "output_tokens": 12,
+        "cost_usd": 0.0
+      },
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "rr": 1.0,
+      "evidence@5": 1.0,
+      "key_fact_recall": 0.0,
+      "token_f1": 0.0,
+      "correctness": 0.0,
+      "judge_reason": "refused an answerable question"
+    },
+    {
+      "id": "s10",
+      "type": "single",
+      "question": "How does FastAPI decide whether a function parameter is a path, query, or body parameter?",
+      "answer": "I don't know based on the FastAPI tutorial docs.",
+      "refused": true,
+      "should_refuse": false,
+      "refusal_correct": false,
+      "retrieved": [
+        "body-multiple-params.md > Body - Multiple Parameters > Mix `Path`, `Query` and body parameters",
+        "query-params.md > Query Parameters > Optional parameters",
+        "body.md > Request Body > Request body + path parameters",
+        "body.md > Request Body > Request body + path + query parameters",
+        "body-fields.md > Body - Fields"
+      ],
+      "expected_sources": [
+        "body.md"
+      ],
+      "usage": {
+        "model": "fake",
+        "input_tokens": 746,
+        "output_tokens": 12,
+        "cost_usd": 0.0
+      },
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "rr": 0.3333333333333333,
+      "evidence@5": 1.0,
+      "key_fact_recall": 0.0,
+      "token_f1": 0.0,
+      "correctness": 0.0,
+      "judge_reason": "refused an answerable question"
+    },
+    {
+      "id": "s11",
+      "type": "single",
+      "question": "How do I make FastAPI expect a single Pydantic body parameter wrapped inside a key like {\"item\": {...}}?",
+      "answer": "Let's say you only have a single `item` body parameter from a Pydantic model `Item`. [1] But if you want it to expect a JSON with a key `item` and inside of it the model contents, as it does when you declare extra body parameters, you can use the special `Body` parameter `embed`: item: Annotated[Item, Body(embed=True)] [1] Notice that even though the `item` was declared the same way as before, it is now expected to be inside of the body with a key `item`. [2]",
+      "refused": false,
+      "should_refuse": false,
+      "refusal_correct": true,
+      "retrieved": [
+        "body-multiple-params.md > Body - Multiple Parameters > Embed a single body parameter",
+        "body-multiple-params.md > Body - Multiple Parameters > Multiple body parameters",
+        "body-multiple-params.md > Body - Multiple Parameters > Singular values in body",
+        "body-multiple-params.md > Body - Multiple Parameters > Recap",
+        "body-multiple-params.md > Body - Multiple Parameters > Mix `Path`, `Query` and body parameters"
+      ],
+      "expected_sources": [
+        "body-multiple-params.md"
+      ],
+      "usage": {
+        "model": "fake",
+        "input_tokens": 983,
+        "output_tokens": 115,
+        "cost_usd": 0.0
+      },
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "rr": 1.0,
+      "evidence@5": 1.0,
+      "key_fact_recall": 1.0,
+      "token_f1": 0.2857142857142857,
+      "correctness": 1.0,
+      "judge_reason": "found 1/1 key facts"
+    },
+    {
+      "id": "s12",
+      "type": "single",
+      "question": "How can I validate that a string attribute in a nested model is a valid URL?",
+      "answer": "So, you can declare deeply nested JSON \"objects\" with specific attribute names, types and validations. [1] For example, as in the `Image` model we have a `url` field, we can declare it to be an instance of Pydantic's `HttpUrl` instead of a `str`: The string will be checked to be a valid URL, and documented in JSON Schema / OpenAPI as such. [2] With **FastAPI**, you can define, validate, document, and use arbitrarily deeply nested models (thanks to Pydantic). [3]",
+      "refused": false,
+      "should_refuse": false,
+      "refusal_correct": true,
+      "retrieved": [
+        "body-nested-models.md > Body - Nested Models > Nested Models",
+        "body-nested-models.md > Body - Nested Models > Special types and validation",
+        "body-nested-models.md > Body - Nested Models > List fields",
+        "body-nested-models.md > Body - Nested Models > Nested Models > Use the submodel as a type",
+        "body-nested-models.md > Body - Nested Models > Attributes with lists of submodels"
+      ],
+      "expected_sources": [
+        "body-nested-models.md"
+      ],
+      "usage": {
+        "model": "fake",
+        "input_tokens": 616,
+        "output_tokens": 116,
+        "cost_usd": 0.0
+      },
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "rr": 1.0,
+      "evidence@5": 1.0,
+      "key_fact_recall": 1.0,
+      "token_f1": 0.2777777777777778,
+      "correctness": 1.0,
+      "judge_reason": "found 1/1 key facts"
+    },
+    {
+      "id": "s13",
+      "type": "single",
+      "question": "Which Pydantic parameter is used to receive partial updates without overwriting stored values with defaults?",
+      "answer": "If you want to receive partial updates, it's very useful to use the parameter `exclude_unset` in Pydantic's model's `.model_dump()`. [1] Like `stored_item_model.model_copy(update=update_data)`: In summary, to apply partial updates you would: [2] Create a copy of the stored model, updating its attributes with the received partial updates (using the `update` parameter). [2]",
+      "refused": false,
+      "should_refuse": false,
+      "refusal_correct": true,
+      "retrieved": [
+        "body-updates.md > Body - Updates > Partial updates with `PATCH` > Using Pydantic's `exclude_unset` parameter",
+        "body-updates.md > Body - Updates > Partial updates with `PATCH` > Partial updates recap",
+        "query-params-str-validations.md > Query Parameters and String Validations > Default values",
+        "body-updates.md > Body - Updates > Partial updates with `PATCH` > Partial updates recap",
+        "body.md > Request Body > Request body + path + query parameters"
+      ],
+      "expected_sources": [
+        "body-updates.md"
+      ],
+      "usage": {
+        "model": "fake",
+        "input_tokens": 939,
+        "output_tokens": 93,
+        "cost_usd": 0.0
+      },
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "rr": 1.0,
+      "evidence@5": 1.0,
+      "key_fact_recall": 1.0,
+      "token_f1": 0.39393939393939387,
+      "correctness": 1.0,
+      "judge_reason": "found 1/1 key facts"
+    },
+    {
+      "id": "s14",
+      "type": "single",
+      "question": "How does FastAPI convert header parameter names that contain underscores, and how can that be disabled?",
+      "answer": "The same way as with regular header parameters, when you have underscore characters in the parameter names, they are **automatically converted to hyphens**. [1] Before setting `convert_underscores` to `False`, bear in mind that some HTTP proxies and servers disallow the usage of headers with underscores. [1] If for some reason you need to disable automatic conversion of underscores to hyphens, set the parameter `convert_underscores` of `Header` to `False`: Before setting `convert_underscores` to `False`, bear in mind that some HTTP proxies and servers disallow the usage of headers with underscores. [3]",
+      "refused": false,
+      "should_refuse": false,
+      "refusal_correct": true,
+      "retrieved": [
+        "header-param-models.md > Header Parameter Models > Disable Convert Underscores",
+        "header-param-models.md > Header Parameter Models > Combine Parameter Models",
+        "header-params.md > Header Parameters > Automatic conversion",
+        "header-param-models.md > Header Parameter Models > Header Parameters with a Pydantic Model",
+        "header-param-models.md > Header Parameter Models"
+      ],
+      "expected_sources": [
+        "header-params.md",
+        "header-param-models.md"
+      ],
+      "usage": {
+        "model": "fake",
+        "input_tokens": 741,
+        "output_tokens": 152,
+        "cost_usd": 0.0
+      },
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "rr": 1.0,
+      "evidence@5": 1.0,
+      "key_fact_recall": 0.5,
+      "token_f1": 0.3111111111111111,
+      "correctness": 0.5,
+      "judge_reason": "found 1/2 key facts; missing: hyphen"
+    },
+    {
+      "id": "s15",
+      "type": "single",
+      "question": "Why can't I send cookies from the interactive /docs UI when testing cookie parameters?",
+      "answer": "I don't know based on the FastAPI tutorial docs.",
+      "refused": true,
+      "should_refuse": false,
+      "refusal_correct": false,
+      "retrieved": [
+        "cookie-param-models.md > Cookie Parameter Models > Cookies with a Pydantic Model",
+        "cookie-param-models.md > Cookie Parameter Models > Check the Docs",
+        "cookie-param-models.md > Cookie Parameter Models > Combine Parameter Models",
+        "cookie-params.md > Cookie Parameters > Declare `Cookie` parameters",
+        "query-params-str-validations.md > Query Parameters and String Validations > Deprecating parameters"
+      ],
+      "expected_sources": [
+        "cookie-params.md",
+        "cookie-param-models.md"
+      ],
+      "usage": {
+        "model": "fake",
+        "input_tokens": 744,
+        "output_tokens": 12,
+        "cost_usd": 0.0
+      },
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "rr": 1.0,
+      "evidence@5": 1.0,
+      "key_fact_recall": 0.0,
+      "token_f1": 0.0,
+      "correctness": 0.0,
+      "judge_reason": "refused an answerable question"
+    },
+    {
+      "id": "s16",
+      "type": "single",
+      "question": "What error does a client get when it sends an extra query parameter to a query parameter model that forbids extra fields?",
+      "answer": "You can use Pydantic's model configuration to `forbid` any `extra` fields: If a client tries to send some **extra** data in the **query parameters**, they will receive an **error** response. [1] If a client tries to send some **extra** data in the **query parameters**, they will receive an **error** response. [1] For example, if the client tries to send a `tool` query parameter with a value of `plumbus`, like: https://example.com/items/?limit=10&tool=plumbus [1]",
+      "refused": false,
+      "should_refuse": false,
+      "refusal_correct": true,
+      "retrieved": [
+        "query-param-models.md > Query Parameter Models > Forbid Extra Query Parameters",
+        "query-param-models.md > Query Parameter Models > Query Parameters with a Pydantic Model",
+        "cookie-param-models.md > Cookie Parameter Models > Combine Parameter Models",
+        "header-param-models.md > Header Parameter Models > Optional Header Parameter Models",
+        "query-param-models.md > Query Parameter Models > Optional Query Parameter Models"
+      ],
+      "expected_sources": [
+        "query-param-models.md"
+      ],
+      "usage": {
+        "model": "fake",
+        "input_tokens": 810,
+        "output_tokens": 116,
+        "cost_usd": 0.0
+      },
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "rr": 1.0,
+      "evidence@5": 1.0,
+      "key_fact_recall": 0.0,
+      "token_f1": 0.1388888888888889,
+      "correctness": 0.0,
+      "judge_reason": "found 0/2 key facts; missing: extra_forbidden, Extra inputs are not permitted"
+    },
+    {
+      "id": "s17",
+      "type": "single",
+      "question": "What package do I need to install to receive form fields or uploaded files?",
+      "answer": "To receive uploaded files and/or form data, first install `python-multipart`. [1] To receive uploaded files, first install `python-multipart`. [2] Create file and form parameters the same way you would for `Body` or `Query`: The files and form fields will be uploaded as form data and you will receive the files and form fields. [3]",
+      "refused": false,
+      "should_refuse": false,
+      "refusal_correct": true,
+      "retrieved": [
+        "request-forms-and-files.md > Request Forms and Files",
+        "request-files.md > Request Files",
+        "request-forms-and-files.md > Request Forms and Files > Define `File` and `Form` parameters",
+        "request-files.md > Request Files > Multiple File Uploads",
+        "request-files.md > Request Files > Multiple File Uploads > Multiple File Uploads with Additional Metadata"
+      ],
+      "expected_sources": [
+        "request-forms.md",
+        "request-files.md",
+        "request-forms-and-files.md",
+        "request-form-models.md"
+      ],
+      "usage": {
+        "model": "fake",
+        "input_tokens": 540,
+        "output_tokens": 83,
+        "cost_usd": 0.0
+      },
+      "hit@5": 1.0,
+      "recall@5": 0.5,
+      "rr": 1.0,
+      "evidence@5": 1.0,
+      "key_fact_recall": 1.0,
+      "token_f1": 0.23076923076923073,
+      "correctness": 1.0,
+      "judge_reason": "found 1/1 key facts"
+    },
+    {
+      "id": "s18",
+      "type": "single",
+      "question": "What are the advantages of UploadFile over bytes for file uploads?",
+      "answer": "Define a file parameter with a type of `UploadFile`: Using `UploadFile` has several advantages over `bytes`: [1] Using `UploadFile` has several advantages over `bytes`: You don't have to use `File()` in the default value of the parameter. [1] And the same way as before, you can use `File()` to set additional parameters, even for `UploadFile`: Use `File`, `bytes`, and `UploadFile` to declare files to be uploaded in the request, sent as form data. [2]",
+      "refused": false,
+      "should_refuse": false,
+      "refusal_correct": true,
+      "retrieved": [
+        "request-files.md > Request Files > File Parameters with `UploadFile`",
+        "request-files.md > Request Files > Multiple File Uploads > Multiple File Uploads with Additional Metadata",
+        "request-files.md > Request Files > Multiple File Uploads",
+        "request-files.md > Request Files > Optional File Upload",
+        "request-files.md > Request Files > File Parameters with `UploadFile` > `UploadFile`"
+      ],
+      "expected_sources": [
+        "request-files.md"
+      ],
+      "usage": {
+        "model": "fake",
+        "input_tokens": 506,
+        "output_tokens": 113,
+        "cost_usd": 0.0
+      },
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "rr": 1.0,
+      "evidence@5": 1.0,
+      "key_fact_recall": 0.0,
+      "token_f1": 0.11764705882352941,
+      "correctness": 0.0,
+      "judge_reason": "found 0/3 key facts; missing: spooled, disk, metadata"
+    },
+    {
+      "id": "s19",
+      "type": "single",
+      "question": "How does FastAPI treat a bool form field that is omitted from the submitted form?",
+      "answer": "**FastAPI** treats omitted `bool` and `bool | None` form fields as `False`, even when their default is `True` or `None`. [1] You just need to declare a **Pydantic model** with the fields you want to receive as **form fields**, and then declare the parameter as `Form`: **FastAPI** will **extract** the data for **each field** from the **form data** in the request and give you the Pydantic model you defined. [2] **FastAPI** will **extract** the data for **each field** from the **form data** in the request and give you the Pydantic model you defined. [2]",
+      "refused": false,
+      "should_refuse": false,
+      "refusal_correct": true,
+      "retrieved": [
+        "request-forms.md > Form Data > Boolean Form Fields",
+        "request-form-models.md > Form Models > Pydantic Models for Forms",
+        "request-form-models.md > Form Models > Combine Form Models",
+        "request-form-models.md > Form Models > Optional Unions of Form Models",
+        "request-form-models.md > Form Models"
+      ],
+      "expected_sources": [
+        "request-forms.md"
+      ],
+      "usage": {
+        "model": "fake",
+        "input_tokens": 493,
+        "output_tokens": 139,
+        "cost_usd": 0.0
+      },
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "rr": 1.0,
+      "evidence@5": 1.0,
+      "key_fact_recall": 0.5,
+      "token_f1": 0.35555555555555557,
+      "correctness": 0.5,
+      "judge_reason": "found 1/2 key facts; missing: unchecked checkboxes"
+    },
+    {
+      "id": "s20",
+      "type": "single",
+      "question": "What does response_model_exclude_unset=True do?",
+      "answer": "You can set the *path operation decorator* parameter `response_model_exclude_unset=True`: and those default values won't be included in the response, only the values actually set. [1] You can also use: `response_model_exclude_defaults=True` [1] Use `response_model_exclude_unset` to return only the values explicitly set. [2]",
+      "refused": false,
+      "should_refuse": false,
+      "refusal_correct": true,
+      "retrieved": [
+        "response-model.md > Response Model - Return Type > Response Model encoding parameters > Use the `response_model_exclude_unset` parameter",
+        "response-model.md > Response Model - Return Type > Recap",
+        "response-model.md > Response Model - Return Type > Response Model encoding parameters > Use the `response_model_exclude_unset` parameter > Data with values for fields with defaults",
+        "body-updates.md > Body - Updates > Partial updates with `PATCH` > Using Pydantic's `exclude_unset` parameter",
+        "response-model.md > Response Model - Return Type > Response Model encoding parameters > `response_model_include` and `response_model_exclude`"
+      ],
+      "expected_sources": [
+        "response-model.md"
+      ],
+      "usage": {
+        "model": "fake",
+        "input_tokens": 690,
+        "output_tokens": 81,
+        "cost_usd": 0.0
+      },
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "rr": 1.0,
+      "evidence@5": 1.0,
+      "key_fact_recall": 1.0,
+      "token_f1": 0.2807017543859649,
+      "correctness": 1.0,
+      "judge_reason": "found 2/2 key facts"
+    },
+    {
+      "id": "s21",
+      "type": "single",
+      "question": "What does HTTP status code 204 mean and can its response have a body?",
+      "answer": "To know more about each status code and which code is for what, check the MDN documentation about HTTP status codes. [1] The same way you can specify a response model, you can also declare the HTTP status code used for the response with the parameter `status_code` in any of the *path operations*: `@app.get()` [2] Responses with these status codes cannot have a body. [3]",
+      "refused": false,
+      "should_refuse": false,
+      "refusal_correct": true,
+      "retrieved": [
+        "response-status-code.md > Response Status Code > About HTTP status codes",
+        "response-status-code.md > Response Status Code",
+        "response-status-code.md > Response Status Code > About HTTP status codes",
+        "handling-errors.md > Handling Errors",
+        "handling-errors.md > Handling Errors > Use `HTTPException` > The resulting response"
+      ],
+      "expected_sources": [
+        "response-status-code.md"
+      ],
+      "usage": {
+        "model": "fake",
+        "input_tokens": 1026,
+        "output_tokens": 93,
+        "cost_usd": 0.0
+      },
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "rr": 1.0,
+      "evidence@5": 1.0,
+      "key_fact_recall": 0.0,
+      "token_f1": 0.12307692307692307,
+      "correctness": 0.0,
+      "judge_reason": "found 0/2 key facts; missing: No Content, must not have a body"
+    },
+    {
+      "id": "s22",
+      "type": "single",
+      "question": "What are the default values of allow_methods and max_age in CORSMiddleware?",
+      "answer": "`allow_methods` - A list of HTTP methods that should be allowed for cross-origin requests. [1] None of `allow_origins`, `allow_methods` and `allow_headers` can be set to `['*']` if `allow_credentials` is set to `True`. [1] `max_age` - Sets a maximum time in seconds for browsers to cache CORS responses. [1]",
+      "refused": false,
+      "should_refuse": false,
+      "refusal_correct": true,
+      "retrieved": [
+        "cors.md > CORS (Cross-Origin Resource Sharing) > Use `CORSMiddleware`",
+        "cors.md > CORS (Cross-Origin Resource Sharing) > Use `CORSMiddleware`",
+        "query-params-str-validations.md > Query Parameters and String Validations",
+        "query-params-str-validations.md > Query Parameters and String Validations > Default values",
+        "body.md > Request Body > Request body + path + query parameters"
+      ],
+      "expected_sources": [
+        "cors.md"
+      ],
+      "usage": {
+        "model": "fake",
+        "input_tokens": 1061,
+        "output_tokens": 76,
+        "cost_usd": 0.0
+      },
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "rr": 1.0,
+      "evidence@5": 1.0,
+      "key_fact_recall": 0.0,
+      "token_f1": 0.20833333333333334,
+      "correctness": 0.0,
+      "judge_reason": "found 0/2 key facts; missing: GET, 600"
+    },
+    {
+      "id": "s23",
+      "type": "single",
+      "question": "If I add MiddlewareA and then MiddlewareB with app.add_middleware, in what order do they run?",
+      "answer": "For example: app.add_middleware(MiddlewareA) [1] app.add_middleware(MiddlewareA) [1] app.add_middleware(MiddlewareB) [1]",
+      "refused": false,
+      "should_refuse": false,
+      "refusal_correct": true,
+      "retrieved": [
+        "middleware.md > Middleware > Multiple middleware execution order",
+        "frontend.md > Frontend > Dependencies and Middleware",
+        "response-model.md > Response Model - Return Type > Return the same input data",
+        "background-tasks.md > Background Tasks > Add the background task",
+        "handling-errors.md > Handling Errors > Add custom headers"
+      ],
+      "expected_sources": [
+        "middleware.md"
+      ],
+      "usage": {
+        "model": "fake",
+        "input_tokens": 763,
+        "output_tokens": 30,
+        "cost_usd": 0.0
+      },
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "rr": 1.0,
+      "evidence@5": 1.0,
+      "key_fact_recall": 0.5,
+      "token_f1": 0.2857142857142857,
+      "correctness": 0.5,
+      "judge_reason": "found 1/2 key facts; missing: outermost"
+    },
+    {
+      "id": "s24",
+      "type": "single",
+      "question": "How do I force a dependency to be called again instead of reusing the cached value within the same request?",
+      "answer": "And it will save the returned value in a \"cache\" and pass it to all the \"dependants\" that need it in that specific request, instead of calling the dependency multiple times for the same request. [1] In an advanced scenario where you know you need the dependency to be called at every step (possibly multiple times) in the same request instead of using the \"cached\" value, you can set the parameter `use_cache=False` when using `Depends`: async def needy_dependency( [1] fresh_value: Annotated[str, Depends(get_value, use_cache=False)], [1]",
+      "refused": false,
+      "should_refuse": false,
+      "refusal_correct": true,
+      "retrieved": [
+        "dependencies/sub-dependencies.md > Sub-dependencies > Using the same dependency multiple times",
+        "dependencies/index.md > Dependencies > Integrated with OpenAPI",
+        "dependencies/dependencies-in-path-operation-decorators.md > Dependencies in path operation decorators > Dependencies for a group of *path operations*",
+        "extra-models.md > Extra Models > `Union` or `anyOf` > `Union` in Python 3.10",
+        "path-params-numeric-validations.md > Path Parameters and Numeric Validations > Order the parameters as you need, tricks"
+      ],
+      "expected_sources": [
+        "dependencies/sub-dependencies.md"
+      ],
+      "usage": {
+        "model": "fake",
+        "input_tokens": 859,
+        "output_tokens": 134,
+        "cost_usd": 0.0
+      },
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "rr": 1.0,
+      "evidence@5": 1.0,
+      "key_fact_recall": 1.0,
+      "token_f1": 0.275,
+      "correctness": 1.0,
+      "judge_reason": "found 1/1 key facts"
+    },
+    {
+      "id": "s25",
+      "type": "single",
+      "question": "What does OAuth2PasswordBearer do when a request has no Authorization header with a Bearer token?",
+      "answer": "It will go and look in the request for that `Authorization` header, check if the value is `Bearer ` plus some token, and will return the token as a `str`. [1] If it doesn't see an `Authorization` header, or the value doesn't have a `Bearer ` token, it will respond with a 401 status code error (`UNAUTHORIZED`) directly. [1] So, to authenticate with our API, it sends a header `Authorization` with a value of `Bearer ` plus the token. [2]",
+      "refused": false,
+      "should_refuse": false,
+      "refusal_correct": true,
+      "retrieved": [
+        "security/first-steps.md > Security - First Steps > What it does",
+        "security/first-steps.md > Security - First Steps > The `password` flow",
+        "header-params.md > Header Parameters > Duplicate headers",
+        "security/oauth2-jwt.md > OAuth2 with Password (and hashing), Bearer with JWT tokens > Check it",
+        "security/simple-oauth2.md > Simple OAuth2 with Password and Bearer > Return the token"
+      ],
+      "expected_sources": [
+        "security/first-steps.md"
+      ],
+      "usage": {
+        "model": "fake",
+        "input_tokens": 1129,
+        "output_tokens": 109,
+        "cost_usd": 0.0
+      },
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "rr": 1.0,
+      "evidence@5": 1.0,
+      "key_fact_recall": 1.0,
+      "token_f1": 0.22580645161290322,
+      "correctness": 1.0,
+      "judge_reason": "found 2/2 key facts"
+    },
+    {
+      "id": "s26",
+      "type": "single",
+      "question": "Which algorithm does the JWT tutorial use to sign tokens, and which library and algorithm does it recommend for password hashing?",
+      "answer": "Create a random secret key that will be used to sign the JWT tokens. [1] Create a variable `ALGORITHM` with the algorithm used to sign the JWT token and set it to `\"HS256\"`. [1] Now that we have all the security flow, let's make the application actually secure, using JWT tokens and secure password hashing. [2]",
+      "refused": false,
+      "should_refuse": false,
+      "refusal_correct": true,
+      "retrieved": [
+        "security/oauth2-jwt.md > OAuth2 with Password (and hashing), Bearer with JWT tokens > Handle JWT tokens",
+        "security/oauth2-jwt.md > OAuth2 with Password (and hashing), Bearer with JWT tokens",
+        "security/oauth2-jwt.md > OAuth2 with Password (and hashing), Bearer with JWT tokens > Password hashing > Why use password hashing",
+        "security/oauth2-jwt.md > OAuth2 with Password (and hashing), Bearer with JWT tokens > Hash and verify the passwords",
+        "security/oauth2-jwt.md > OAuth2 with Password (and hashing), Bearer with JWT tokens > Install `PyJWT`"
+      ],
+      "expected_sources": [
+        "security/oauth2-jwt.md"
+      ],
+      "usage": {
+        "model": "fake",
+        "input_tokens": 757,
+        "output_tokens": 77,
+        "cost_usd": 0.0
+      },
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "rr": 1.0,
+      "evidence@5": 1.0,
+      "key_fact_recall": 0.3333333333333333,
+      "token_f1": 0.17543859649122806,
+      "correctness": 0.3333333333333333,
+      "judge_reason": "found 1/3 key facts; missing: pwdlib, Argon2"
+    },
+    {
+      "id": "s27",
+      "type": "single",
+      "question": "What does FastAPI do out of the box to keep Server-Sent Events connections healthy behind proxies?",
+      "answer": "Send a **\"keep alive\" `ping` comment** every 15 seconds when there hasn't been any message, to prevent some proxies from closing the connection, as suggested in the HTML specification: Server-Sent Events. [1] You can stream data to the client using **Server-Sent Events** (SSE). [2] FastAPI also has first-class support for Server-Sent Events (SSE), which are quite similar but with a couple of extra details. [3]",
+      "refused": false,
+      "should_refuse": false,
+      "refusal_correct": true,
+      "retrieved": [
+        "server-sent-events.md > Server-Sent Events (SSE) > Technical Details",
+        "server-sent-events.md > Server-Sent Events (SSE)",
+        "stream-json-lines.md > Stream JSON Lines > Server-Sent Events (SSE)",
+        "server-sent-events.md > Server-Sent Events (SSE) > Resuming with `Last-Event-ID`",
+        "server-sent-events.md > Server-Sent Events (SSE) > Stream SSE with FastAPI"
+      ],
+      "expected_sources": [
+        "server-sent-events.md"
+      ],
+      "usage": {
+        "model": "fake",
+        "input_tokens": 572,
+        "output_tokens": 103,
+        "cost_usd": 0.0
+      },
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "rr": 1.0,
+      "evidence@5": 1.0,
+      "key_fact_recall": 0.3333333333333333,
+      "token_f1": 0.2222222222222222,
+      "correctness": 0.3333333333333333,
+      "judge_reason": "found 1/3 key facts; missing: no-cache, X-Accel-Buffering"
+    },
+    {
+      "id": "s28",
+      "type": "single",
+      "question": "What is the default scope of a dependency with yield, and what does scope=\"function\" change?",
+      "answer": "But if you know that you won't need to use the dependency after returning from the *path operation function*, you can use `Depends(scope=\"function\")` to tell FastAPI that it should close the dependency after the *path operation function* returns, but **before** the **response is sent**. [1] `Depends()` receives a `scope` parameter that can be: `\"function\"`: start the dependency before the *path operation function* that handles the request, end the dependency after the *path operation function* ends, but **before** the response is sent back to the client. [1] If not specified and the dependency has `yield`, it will have a `scope` of `\"request\"` by default. [1]",
+      "refused": false,
+      "should_refuse": false,
+      "refusal_correct": true,
+      "retrieved": [
+        "dependencies/dependencies-with-yield.md > Dependencies with yield > Early exit and `scope`",
+        "dependencies/dependencies-with-yield.md > Dependencies with yield > Execution of dependencies with `yield`",
+        "dependencies/dependencies-with-yield.md > Dependencies with yield > Context Managers > Using context managers in dependencies with `yield`",
+        "dependencies/dependencies-with-yield.md > Dependencies with yield > Early exit and `scope` > `scope` for sub-dependencies",
+        "dependencies/dependencies-with-yield.md > Dependencies with yield > Dependencies with `yield`, `HTTPException`, `except` and Background Tasks"
+      ],
+      "expected_sources": [
+        "dependencies/dependencies-with-yield.md"
+      ],
+      "usage": {
+        "model": "fake",
+        "input_tokens": 1009,
+        "output_tokens": 166,
+        "cost_usd": 0.0
+      },
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "rr": 1.0,
+      "evidence@5": 1.0,
+      "key_fact_recall": 1.0,
+      "token_f1": 0.31067961165048547,
+      "correctness": 1.0,
+      "judge_reason": "found 2/2 key facts"
+    },
+    {
+      "id": "m01",
+      "type": "multi_hop",
+      "question": "How can I require an X-Token header dependency for every path operation of an APIRouter, and in what order do router dependencies run compared to dependencies in the path operation decorator?",
+      "answer": "I don't know based on the FastAPI tutorial docs.",
+      "refused": true,
+      "should_refuse": false,
+      "refusal_correct": false,
+      "retrieved": [
+        "path-operation-configuration.md > Path Operation Configuration",
+        "dependencies/dependencies-in-path-operation-decorators.md > Dependencies in path operation decorators",
+        "dependencies/dependencies-in-path-operation-decorators.md > Dependencies in path operation decorators > Add `dependencies` to the *path operation decorator*",
+        "path-operation-configuration.md > Path Operation Configuration > Deprecate a *path operation*",
+        "dependencies/global-dependencies.md > Global Dependencies"
+      ],
+      "expected_sources": [
+        "bigger-applications.md",
+        "dependencies/dependencies-in-path-operation-decorators.md"
+      ],
+      "usage": {
+        "model": "fake",
+        "input_tokens": 666,
+        "output_tokens": 12,
+        "cost_usd": 0.0
+      },
+      "hit@5": 1.0,
+      "recall@5": 0.5,
+      "rr": 0.5,
+      "evidence@5": 1.0,
+      "key_fact_recall": 0.0,
+      "token_f1": 0.0,
+      "correctness": 0.0,
+      "judge_reason": "refused an answerable question"
+    },
+    {
+      "id": "m02",
+      "type": "multi_hop",
+      "question": "How does mounting StaticFiles differ from including an APIRouter with respect to the OpenAPI docs?",
+      "answer": "This is different from using an `APIRouter` as a mounted application is completely independent. [1] The OpenAPI and docs from your main application won't include anything from the mounted application, etc. [1] \"Mount\" a `StaticFiles()` instance in a specific path. [2]",
+      "refused": false,
+      "should_refuse": false,
+      "refusal_correct": true,
+      "retrieved": [
+        "static-files.md > Static Files > Use `StaticFiles` > What is \"Mounting\"",
+        "static-files.md > Static Files > Use `StaticFiles`",
+        "bigger-applications.md > Bigger Applications - Multiple Files > The main `FastAPI` > Include the `APIRouter`s for `users` and `items`",
+        "bigger-applications.md > Bigger Applications - Multiple Files > Include an `APIRouter` in another",
+        "metadata.md > Metadata and Docs URLs > Metadata for tags > Use your tags"
+      ],
+      "expected_sources": [
+        "static-files.md",
+        "bigger-applications.md"
+      ],
+      "usage": {
+        "model": "fake",
+        "input_tokens": 745,
+        "output_tokens": 67,
+        "cost_usd": 0.0
+      },
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "rr": 1.0,
+      "evidence@5": 1.0,
+      "key_fact_recall": 0.6666666666666666,
+      "token_f1": 0.4,
+      "correctness": 0.6666666666666666,
+      "judge_reason": "found 2/3 key facts; missing: not mounted"
+    },
+    {
+      "id": "m03",
+      "type": "multi_hop",
+      "question": "When does the exit code of a dependency with yield run relative to middleware and the response, and when do background tasks run?",
+      "answer": "If you have dependencies with `yield`, the exit code will run *after* the middleware. [1] If there were any background tasks (covered in the Background Tasks section, you will see it later), they will run *after* all the middleware. [1] **FastAPI** will make sure that the \"exit code\" in each dependency with `yield` is run in the correct order. [4]",
+      "refused": false,
+      "should_refuse": false,
+      "refusal_correct": true,
+      "retrieved": [
+        "middleware.md > Middleware",
+        "dependencies/dependencies-with-yield.md > Dependencies with yield > Execution of dependencies with `yield`",
+        "dependencies/dependencies-with-yield.md > Dependencies with yield > Early exit and `scope` > `scope` for sub-dependencies",
+        "dependencies/dependencies-with-yield.md > Dependencies with yield > Sub-dependencies with `yield`",
+        "dependencies/dependencies-with-yield.md > Dependencies with yield > Execution of dependencies with `yield`"
+      ],
+      "expected_sources": [
+        "middleware.md",
+        "dependencies/dependencies-with-yield.md"
+      ],
+      "usage": {
+        "model": "fake",
+        "input_tokens": 1303,
+        "output_tokens": 87,
+        "cost_usd": 0.0
+      },
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "rr": 1.0,
+      "evidence@5": 1.0,
+      "key_fact_recall": 0.5,
+      "token_f1": 0.3076923076923077,
+      "correctness": 0.5,
+      "judge_reason": "found 1/2 key facts; missing: after the response"
+    },
+    {
+      "id": "m04",
+      "type": "multi_hop",
+      "question": "In the SQLModel tutorial, how do you avoid returning a hero's secret_name and still support partial updates?",
+      "answer": "It has the same fields as `HeroBase`, and it also has `secret_name`. [1] Now, when the clients **create a new hero**, they will send the `secret_name`, it will be stored in the database, but those secret names won't be returned in the API to the clients. [1] Additionally, we create a `secret_name` for the hero, but so far, we are returning it everywhere, that's not very **secret**... 😅 [3]",
+      "refused": false,
+      "should_refuse": false,
+      "refusal_correct": true,
+      "retrieved": [
+        "sql-databases.md > SQL (Relational) Databases > Update the App with Multiple Models > Create Multiple Models > `HeroCreate` - the *data model* to create a hero",
+        "sql-databases.md > SQL (Relational) Databases > Update the App with Multiple Models > Create Multiple Models > `Hero` - the *table model*",
+        "sql-databases.md > SQL (Relational) Databases > Update the App with Multiple Models",
+        "sql-databases.md > SQL (Relational) Databases > Update the App with Multiple Models > Create Multiple Models > `HeroUpdate` - the *data model* to update a hero",
+        "sql-databases.md > SQL (Relational) Databases > Update the App with Multiple Models > Run the App Again"
+      ],
+      "expected_sources": [
+        "sql-databases.md",
+        "response-model.md",
+        "body-updates.md"
+      ],
+      "usage": {
+        "model": "fake",
+        "input_tokens": 861,
+        "output_tokens": 98,
+        "cost_usd": 0.0
+      },
+      "hit@5": 1.0,
+      "recall@5": 0.3333333333333333,
+      "rr": 1.0,
+      "evidence@5": 0.0,
+      "key_fact_recall": 0.0,
+      "token_f1": 0.1234567901234568,
+      "correctness": 0.0,
+      "judge_reason": "found 0/3 key facts; missing: HeroPublic, exclude_unset, sqlmodel_update"
+    },
+    {
+      "id": "m05",
+      "type": "multi_hop",
+      "question": "What is the difference between streaming JSON Lines and Server-Sent Events in FastAPI, including the content types?",
+      "answer": "FastAPI also has first-class support for Server-Sent Events (SSE), which are quite similar but with a couple of extra details. [1] You can stream data to the client using **Server-Sent Events** (SSE). [2] This is similar to Stream JSON Lines, but uses the `text/event-stream` format, which is supported natively by browsers with the `EventSource` API. [2]",
+      "refused": false,
+      "should_refuse": false,
+      "refusal_correct": true,
+      "retrieved": [
+        "stream-json-lines.md > Stream JSON Lines > Server-Sent Events (SSE)",
+        "server-sent-events.md > Server-Sent Events (SSE)",
+        "stream-json-lines.md > Stream JSON Lines > Stream JSON Lines with FastAPI",
+        "server-sent-events.md > Server-Sent Events (SSE) > Stream SSE with FastAPI",
+        "server-sent-events.md > Server-Sent Events (SSE) > Resuming with `Last-Event-ID`"
+      ],
+      "expected_sources": [
+        "stream-json-lines.md",
+        "server-sent-events.md"
+      ],
+      "usage": {
+        "model": "fake",
+        "input_tokens": 567,
+        "output_tokens": 88,
+        "cost_usd": 0.0
+      },
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "rr": 1.0,
+      "evidence@5": 1.0,
+      "key_fact_recall": 0.5,
+      "token_f1": 0.41860465116279066,
+      "correctness": 0.5,
+      "judge_reason": "found 1/2 key facts; missing: application/jsonl"
+    },
+    {
+      "id": "m06",
+      "type": "multi_hop",
+      "question": "For the OAuth2 password flow login endpoint, which fields must the client send and in what format, and what package is needed to read them?",
+      "answer": "OAuth2 specifies that when using the \"password flow\" (that we are using) the client/user must send `username` and `password` fields as form data. [1] Create form parameters the same way you would for `Body` or `Query`: For example, in one of the ways the OAuth2 specification can be used (called \"password flow\") it is required to send a `username` and `password` as form fields. [2] For example, in one of the ways the OAuth2 specification can be used (called \"password flow\") it is required to send a `username` and `password` as form fields. [2]",
+      "refused": false,
+      "should_refuse": false,
+      "refusal_correct": true,
+      "retrieved": [
+        "security/simple-oauth2.md > Simple OAuth2 with Password and Bearer > Get the `username` and `password`",
+        "request-forms.md > Form Data > Define `Form` parameters",
+        "security/first-steps.md > Security - First Steps > The `password` flow",
+        "sql-databases.md > SQL (Relational) Databases > Update the App with Multiple Models > Create Multiple Models > `HeroCreate` - the *data model* to create a hero",
+        "security/simple-oauth2.md > Simple OAuth2 with Password and Bearer > Get the `username` and `password` > `scope`"
+      ],
+      "expected_sources": [
+        "security/simple-oauth2.md",
+        "request-forms.md",
+        "security/first-steps.md"
+      ],
+      "usage": {
+        "model": "fake",
+        "input_tokens": 995,
+        "output_tokens": 137,
+        "cost_usd": 0.0
+      },
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "rr": 1.0,
+      "evidence@5": 1.0,
+      "key_fact_recall": 0.75,
+      "token_f1": 0.21739130434782605,
+      "correctness": 0.75,
+      "judge_reason": "found 3/4 key facts; missing: python-multipart"
+    },
+    {
+      "id": "u01",
+      "type": "unanswerable",
+      "question": "How do I deploy a FastAPI app to AWS Lambda using Mangum?",
+      "answer": "I don't know based on the FastAPI tutorial docs.",
+      "refused": true,
+      "should_refuse": true,
+      "refusal_correct": true,
+      "retrieved": [
+        "first-steps.md > First Steps > Recap",
+        "first-steps.md > First Steps > Deploy your app (optional)",
+        "first-steps.md > First Steps > Recap, step by step > Step 6: Deploy it > About FastAPI Cloud",
+        "bigger-applications.md > Bigger Applications - Multiple Files > `APIRouter` > *Path operations* with `APIRouter`",
+        "bigger-applications.md > Bigger Applications - Multiple Files > The main `FastAPI` > Import the `APIRouter`"
+      ],
+      "expected_sources": [],
+      "usage": {
+        "model": "fake",
+        "input_tokens": 649,
+        "output_tokens": 12,
+        "cost_usd": 0.0
+      }
+    },
+    {
+      "id": "u02",
+      "type": "unanswerable",
+      "question": "How do I add per-IP rate limiting to my FastAPI endpoints with slowapi?",
+      "answer": "I don't know based on the FastAPI tutorial docs.",
+      "refused": true,
+      "should_refuse": true,
+      "refusal_correct": true,
+      "retrieved": [
+        "index.md > Tutorial - User Guide > Install FastAPI",
+        "first-steps.md > First Steps > Recap, step by step > Step 6: Deploy it > About FastAPI Cloud",
+        "security/index.md > Security > **FastAPI** utilities",
+        "request-files.md > Request Files > File Parameters with `UploadFile` > `UploadFile`",
+        "security/first-steps.md > Security - First Steps > Run it"
+      ],
+      "expected_sources": [],
+      "usage": {
+        "model": "fake",
+        "input_tokens": 576,
+        "output_tokens": 12,
+        "cost_usd": 0.0
+      }
+    },
+    {
+      "id": "u03",
+      "type": "unanswerable",
+      "question": "How do I implement WebSocket endpoints in FastAPI?",
+      "answer": "I don't know based on the FastAPI tutorial docs.",
+      "refused": true,
+      "should_refuse": true,
+      "refusal_correct": true,
+      "retrieved": [
+        "path-params.md > Path Parameters > Recap",
+        "response-model.md > Response Model - Return Type > Return Type and Data Filtering > FastAPI Data Filtering",
+        "query-params-str-validations.md > Query Parameters and String Validations > Additional validation > Import `Query` and `Annotated`",
+        "response-model.md > Response Model - Return Type > Other Return Type Annotations > Disable Response Model",
+        "path-params-numeric-validations.md > Path Parameters and Numeric Validations > Import `Path`"
+      ],
+      "expected_sources": [],
+      "usage": {
+        "model": "fake",
+        "input_tokens": 668,
+        "output_tokens": 12,
+        "cost_usd": 0.0
+      }
+    },
+    {
+      "id": "u04",
+      "type": "unanswerable",
+      "question": "How do I integrate a Strawberry GraphQL schema into a FastAPI app?",
+      "answer": "I don't know based on the FastAPI tutorial docs.",
+      "refused": true,
+      "should_refuse": true,
+      "refusal_correct": true,
+      "retrieved": [
+        "testing.md > Testing > Separating tests > **FastAPI** app file",
+        "first-steps.md > First Steps > Deploy your app (optional)",
+        "security/index.md > Security > **FastAPI** utilities",
+        "testing.md > Testing > Testing: extended example > Extended **FastAPI** app file",
+        "first-steps.md > First Steps > Recap"
+      ],
+      "expected_sources": [],
+      "usage": {
+        "model": "fake",
+        "input_tokens": 572,
+        "output_tokens": 12,
+        "cost_usd": 0.0
+      }
+    },
+    {
+      "id": "u05",
+      "type": "unanswerable",
+      "question": "What is the default maximum upload size in megabytes that UploadFile keeps in memory before spilling to disk?",
+      "answer": "It uses a \"spooled\" file: A file stored in memory up to a maximum size limit, and after passing this limit it will be stored on disk. [1] A file stored in memory up to a maximum size limit, and after passing this limit it will be stored on disk. [1] And the same way as before, you can use `File()` to set additional parameters, even for `UploadFile`: Use `File`, `bytes`, and `UploadFile` to declare files to be uploaded in the request, sent as form data. [4]",
+      "refused": false,
+      "should_refuse": true,
+      "refusal_correct": false,
+      "retrieved": [
+        "request-files.md > Request Files > File Parameters with `UploadFile`",
+        "request-files.md > Request Files > Optional File Upload",
+        "request-files.md > Request Files > Multiple File Uploads",
+        "request-files.md > Request Files > Multiple File Uploads > Multiple File Uploads with Additional Metadata",
+        "request-files.md > Request Files > Define `File` Parameters"
+      ],
+      "expected_sources": [],
+      "usage": {
+        "model": "fake",
+        "input_tokens": 701,
+        "output_tokens": 115,
+        "cost_usd": 0.0
+      }
+    },
+    {
+      "id": "u06",
+      "type": "unanswerable",
+      "question": "How do I configure Kubernetes liveness and readiness probes for a FastAPI container?",
+      "answer": "I don't know based on the FastAPI tutorial docs.",
+      "refused": true,
+      "should_refuse": true,
+      "refusal_correct": true,
+      "retrieved": [
+        "security/first-steps.md > Security - First Steps > **FastAPI**'s `OAuth2PasswordBearer` > Use it",
+        "path-operation-configuration.md > Path Operation Configuration",
+        "dependencies/index.md > Dependencies > First Steps > Declare the dependency, in the \"dependant\"",
+        "bigger-applications.md > Bigger Applications - Multiple Files > Configure the `entrypoint` in `pyproject.toml`",
+        "dependencies/sub-dependencies.md > Sub-dependencies > Using the same dependency multiple times"
+      ],
+      "expected_sources": [],
+      "usage": {
+        "model": "fake",
+        "input_tokens": 1101,
+        "output_tokens": 12,
+        "cost_usd": 0.0
+      }
+    }
+  ]
+}

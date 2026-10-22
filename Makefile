@@ -3,7 +3,7 @@ SHELL := /bin/bash
 export DATABASE_URL ?= postgresql://postgres:postgres@localhost:5432/p1_rag
 CONFIG ?= baseline
 
-.PHONY: setup db ingest serve test lint format demo eval
+.PHONY: setup db ingest serve test lint format demo eval eval-all
 
 setup:  ## install deps and prepare the database (create + migrate)
 	uv sync
@@ -20,6 +20,9 @@ serve:  ## run the API on :8000
 
 eval:  ## evaluate one config (CONFIG=baseline) -> reports/$(CONFIG).json + .md
 	uv run ragevals eval --config $(CONFIG)
+
+eval-all:  ## evaluate every config and regenerate reports/RESULTS.md
+	uv run ragevals eval-all
 
 test:
 	uv run pytest

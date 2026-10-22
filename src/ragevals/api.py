@@ -14,6 +14,7 @@ from fastapi import Depends, FastAPI, HTTPException, Request
 from pydantic import BaseModel, Field
 
 from ragevals.configs import CONFIGS, get_config
+from ragevals.corpus import corpus_stats
 from ragevals.db import make_pool
 from ragevals.embeddings import get_embedder
 from ragevals.llm import get_generator
@@ -79,11 +80,12 @@ def build_services() -> Services:
     store = PgVectorStore(pool)
     embedder = get_embedder()
     generator = get_generator()
+    stats = corpus_stats(settings.corpus_dir)
     pipelines: dict[str, RagPipeline] = {}
 
     def pipeline_for(name: str) -> RagPipeline:
         if name not in pipelines:
-            pipelines[name] = build_pipeline(get_config(name), store, embedder, generator)
+            pipelines[name] = build_pipeline(get_config(name), store, embedder, generator, stats)
         return pipelines[name]
 
     return Services(pipeline_for=pipeline_for, _closers=[pool.close])
