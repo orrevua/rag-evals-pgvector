@@ -1,24 +1,27 @@
-"""Command line: ``ragevals init-db | ingest | ask | eval``."""
+"""Command line: ``ragevals init-db | ingest | ask | eval | eval-all | gate``."""
 
 from __future__ import annotations
 
 import json
 from contextlib import contextmanager
+from pathlib import Path
 
 import typer
 
+from ragevals.cache import PgAnswerCache
 from ragevals.configs import CONFIGS, get_config
 from ragevals.corpus import corpus_stats
 from ragevals.db import ensure_database, make_pool, migrate
 from ragevals.embeddings import get_embedder
 from ragevals.evals.dataset import load_golden
+from ragevals.evals.gate import check_gate
 from ragevals.evals.judge import get_judge
 from ragevals.evals.report import render_markdown, render_results, write_report
 from ragevals.evals.runner import run_eval
 from ragevals.ingest import ingest as run_ingest
 from ragevals.llm import get_generator
 from ragevals.pipeline import build_pipeline
-from ragevals.settings import get_settings
+from ragevals.settings import PROJECT_ROOT, get_settings
 from ragevals.store import PgVectorStore
 
 app = typer.Typer(help="RAG over the FastAPI tutorial, with evals.", no_args_is_help=True)
@@ -59,6 +62,8 @@ def ingest(
             typer.echo(
                 f"{result.collection}: {result.chunks} chunks from {result.documents} documents"
             )
+        # The context changed, so cached answers may be stale.
+        typer.echo(f"cleared {PgAnswerCache(store.pool).clear()} cached answers")
 
 
 @app.command()
@@ -117,6 +122,22 @@ def eval_all(
     path.write_text(render_results(reports), encoding="utf-8")
     typer.echo(f"wrote {path}")
     typer.echo(path.read_text(encoding="utf-8"))
+
+
+@app.command()
+def gate(
+    gate_file: str = typer.Option("evals/gate.json", help="Committed thresholds"),
+) -> None:
+    """Fail (exit 1) if any report metric is below its threshold in evals/gate.json."""
+    settings = get_settings()
+    path = Path(gate_file)
+    results = check_gate(path if path.is_absolute() else PROJECT_ROOT / path, settings.reports_dir)
+    for r in results:
+        shown = "missing" if r.value is None else f"{r.value:.3f}"
+        status = "PASS" if r.passed else "FAIL"
+        typer.echo(f"{status}  {r.config:<12} {r.metric:<18} {shown} (min {r.threshold:.3f})")
+    if not all(r.passed for r in results):
+        raise typer.Exit(code=1)
 
 
 if __name__ == "__main__":

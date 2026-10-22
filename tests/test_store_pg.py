@@ -71,3 +71,36 @@ def test_hybrid_retriever_end_to_end(pg_pool, collection_name):
         assert hits[0].source == "c.md"
     finally:
         store.drop_collection(collection_name)
+
+
+def test_pg_answer_cache_roundtrip_and_hit_count(pg_pool):
+    import uuid
+
+    from ragevals.cache import PgAnswerCache
+
+    cache = PgAnswerCache(pg_pool)
+    key = f"test-{uuid.uuid4().hex}"
+    assert cache.get(key) is None
+    cache.put(key, "q?", "baseline", {"answer": "a", "sources": []})
+    assert cache.get(key) == {"answer": "a", "sources": []}
+    with pg_pool.connection() as conn:
+        hits = conn.execute("SELECT hits FROM answer_cache WHERE cache_key = %s", (key,)).fetchone()
+        conn.execute("DELETE FROM answer_cache WHERE cache_key = %s", (key,))
+    assert hits[0] == 1
+
+
+def test_pg_request_log_inserts_row(pg_pool):
+    import uuid
+
+    from ragevals.observability import PgRequestLog, RequestRecord
+
+    rid = f"test-{uuid.uuid4().hex}"
+    PgRequestLog(pg_pool).record(
+        RequestRecord(rid, "/ask", "baseline", "q?", False, 12.5, input_tokens=10, cost_usd=0.001)
+    )
+    with pg_pool.connection() as conn:
+        row = conn.execute(
+            "SELECT input_tokens, cost_usd, total_ms FROM request_log WHERE request_id = %s", (rid,)
+        ).fetchone()
+        conn.execute("DELETE FROM request_log WHERE request_id = %s", (rid,))
+    assert row[0] == 10 and float(row[1]) == 0.001 and row[2] == 12.5

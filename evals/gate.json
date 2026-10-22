@@ -1,0 +1,7 @@
+{
+  "description": "Minimum metric values the offline eval (hash embedder + fake extractive LLM) must keep. CI runs `make eval-all` then `ragevals gate`. Thresholds sit slightly below the committed results in reports/RESULTS.md; raise them deliberately when you improve the pipeline.",
+  "thresholds": {
+    "baseline": {"hit_rate@5": 0.95},
+    "combined": {"hit_rate@5": 0.95, "mrr": 0.90, "correctness": 0.50, "refusal_accuracy": 0.90}
+  }
+}

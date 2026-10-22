@@ -1,0 +1,65 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test-and-eval:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: p1_rag
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d p1_rag"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/p1_rag
+      LLM_PROVIDER: fake
+      EMBEDDER: hash
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install
+        run: uv sync --locked
+
+      - name: Lint
+        run: |
+          uv run ruff check .
+          uv run ruff format --check .
+
+      - name: Tests (Postgres tests run against the service container)
+        run: uv run pytest
+
+      - name: Ingest and evaluate every config
+        run: |
+          uv run ragevals init-db
+          uv run ragevals ingest --config all
+          uv run ragevals eval-all
+
+      - name: Eval gate (thresholds in evals/gate.json)
+        run: uv run ragevals gate
+
+      - name: Committed results are reproducible
+        run: |
+          git diff --stat --exit-code reports/ \
+            || echo "::warning::reports/ differ from the committed version; run 'make eval-all' and commit"
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: eval-reports
+          path: reports/

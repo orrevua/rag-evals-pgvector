@@ -3,7 +3,7 @@ SHELL := /bin/bash
 export DATABASE_URL ?= postgresql://postgres:postgres@localhost:5432/p1_rag
 CONFIG ?= baseline
 
-.PHONY: setup db ingest serve test lint format demo eval eval-all
+.PHONY: setup db ingest serve test lint format demo eval eval-all gate ci up down
 
 setup:  ## install deps and prepare the database (create + migrate)
 	uv sync
@@ -23,6 +23,20 @@ eval:  ## evaluate one config (CONFIG=baseline) -> reports/$(CONFIG).json + .md
 
 eval-all:  ## evaluate every config and regenerate reports/RESULTS.md
 	uv run ragevals eval-all
+
+gate:  ## fail if metrics drop below evals/gate.json (run after eval-all)
+	uv run ragevals gate
+
+ci: lint test ingest eval-all gate  ## what GitHub Actions runs
+
+up:  ## docker compose: db, one-shot ingest + eval (writes ./reports), then the api on :8000
+	docker compose up --build --detach db
+	docker compose run --rm --build ingest
+	docker compose up --build --detach api
+	@echo "API: http://localhost:8000/docs  |  report: reports/RESULTS.md"
+
+down:
+	docker compose down
 
 test:
 	uv run pytest
