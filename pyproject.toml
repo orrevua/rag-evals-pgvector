@@ -15,6 +15,7 @@ dependencies = [
     "pydantic>=2.7",
     "typer>=0.12",
     "anthropic>=0.40",
+    "snowballstemmer>=3.1.1",
 ]
 
 [project.optional-dependencies]

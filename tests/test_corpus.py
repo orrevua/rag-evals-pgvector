@@ -49,3 +49,8 @@ def test_load_real_corpus():
     by_source = {d.source: d for d in docs}
     assert by_source["query-params.md"].title == "Query Parameters"
     assert all("{*" not in d.text for d in docs)
+
+
+def test_bare_code_fence_keeps_its_first_line():
+    text = clean_markdown("Use a URL like:\n\n```\n/files/{file_path:path}\n```\n")
+    assert "/files/{file_path:path}" in text

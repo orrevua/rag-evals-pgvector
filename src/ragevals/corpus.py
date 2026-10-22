@@ -16,9 +16,9 @@ from pathlib import Path
 # <div class="termy"> ... </div> blocks are animated terminal sessions full of <font> tags.
 _TERMY_RE = re.compile(r'<div class="termy">.*?</div>', re.DOTALL)
 # {* ../../docs_src/first_steps/tutorial001_py310.py hl[3] *}: code includes resolved by MkDocs.
-_INCLUDE_RE = re.compile(r"^\{\*.*?\*\}\s*$", re.MULTILINE)
+_INCLUDE_RE = re.compile(r"^\{\*.*?\*\}[ \t]*$", re.MULTILINE)
 # "# First Steps { #first-steps }": explicit heading anchors.
-_ANCHOR_RE = re.compile(r"\s*\{\s*#[^}]*\}\s*$", re.MULTILINE)
+_ANCHOR_RE = re.compile(r"[ \t]*\{[ \t]*#[^}\n]*\}[ \t]*$", re.MULTILINE)
 # "/// tip", "/// note | Technical Details", "///", "//// tab | Python 3.10+", "////".
 _ADMONITION_RE = re.compile(r"^/{3,4}.*$", re.MULTILINE)
 _HTML_COMMENT_RE = re.compile(r"<!--.*?-->", re.DOTALL)
@@ -26,7 +26,7 @@ _IMAGE_RE = re.compile(r"!\[[^\]]*\]\([^)]*\)")
 _LINK_RE = re.compile(r"\[([^\]]+)\]\([^)]*\)")
 _HTML_TAG_RE = re.compile(r"</?[a-zA-Z][^>]*>")
 # ```Python hl_lines="1 3" -> ```python
-_FENCE_RE = re.compile(r"^```\s*([A-Za-z]*)[^\n]*$", re.MULTILINE)
+_FENCE_RE = re.compile(r"^```[ \t]*([A-Za-z]*)[^\n]*$", re.MULTILINE)
 _BLANKS_RE = re.compile(r"\n{3,}")
 
 

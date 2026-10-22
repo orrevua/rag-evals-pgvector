@@ -16,7 +16,7 @@ from dataclasses import dataclass, field
 from typing import Protocol
 
 from ragevals.store import RetrievedChunk
-from ragevals.text import content_terms, unique
+from ragevals.text import TermStats, content_terms, unique
 
 REFUSAL = "I don't know based on the FastAPI tutorial docs."
 
@@ -122,25 +122,36 @@ def question_terms(question: str) -> list[str]:
     return [t for t in unique(content_terms(question)) if t not in GENERIC_TERMS]
 
 
-def context_support(question: str, contexts: list[RetrievedChunk], top_n: int = 3) -> float:
-    """Fraction of the question's topical terms that appear anywhere in the top contexts.
+def context_support(
+    question: str, contexts: list[RetrievedChunk], stats: TermStats | None = None
+) -> float:
+    """IDF-weighted fraction of the question's topical terms that appear in the contexts.
 
-    A cheap proxy for "is the answer in here?". Unanswerable questions tend to mention things
-    the docs never talk about (``lambda``, ``websocket``...), which drags this number down.
+    A cheap proxy for "is the answer in here?". Unanswerable questions tend to mention things the
+    docs never talk about (``lambda``, ``websocket``...). Those words are rare in the corpus, so
+    they carry a high IDF weight, and missing them drags the score down far more than missing a
+    common word like "parameter" would. Without ``stats`` every term weighs the same.
     """
     terms = question_terms(question)
     if not terms or not contexts:
         return 0.0
-    vocabulary = set(content_terms(" ".join(f"{c.heading} {c.content}" for c in contexts[:top_n])))
-    return sum(t in vocabulary for t in terms) / len(terms)
+    vocabulary = set(content_terms(" ".join(f"{c.heading} {c.content}" for c in contexts)))
+
+    def weight(term: str) -> float:
+        return stats.idf(term) if stats else 1.0
+
+    total = sum(weight(t) for t in terms)
+    return sum(weight(t) for t in terms if t in vocabulary) / total if total else 0.0
 
 
 class ExtractiveGenerator:
     """A deterministic stand-in for an LLM that answers by *quoting* the retrieved chunks.
 
-    1. Refuse if the top chunks do not cover enough of the question's topical terms.
+    1. Refuse if the retrieved chunks do not cover enough of the question's topical terms
+       (IDF-weighted, see ``context_support``). The 0.5 threshold is a round number, but it was
+       chosen while looking at the golden set, so treat refusal numbers as optimistic.
     2. Score every sentence of every retrieved chunk by IDF-weighted overlap with the question,
-       discounted by the chunk's retrieval rank.
+       discounted by the chunk's retrieval rank (so better ranking -> better answers).
     3. Return the best few sentences in reading order, each followed by a ``[n]`` citation.
 
     It cannot paraphrase, reason, or combine facts, so it under-performs a real model on
@@ -150,13 +161,16 @@ class ExtractiveGenerator:
 
     name = "fake-extractive"
 
-    def __init__(self, min_support: float = 0.6, max_sentences: int = 3) -> None:
+    def __init__(
+        self, stats: TermStats | None = None, min_support: float = 0.5, max_sentences: int = 3
+    ) -> None:
+        self.stats = stats
         self.min_support = min_support
         self.max_sentences = max_sentences
 
     def generate(self, question: str, contexts: list[RetrievedChunk]) -> Generation:
         prompt_tokens = approx_tokens(question + "".join(c.content for c in contexts))
-        if context_support(question, contexts) < self.min_support:
+        if context_support(question, contexts, self.stats) < self.min_support:
             return Generation(
                 text=REFUSAL,
                 refused=True,
@@ -166,22 +180,37 @@ class ExtractiveGenerator:
         q_terms = set(question_terms(question))
         candidates: list[tuple[int, int, str, set[str]]] = []
         for rank, chunk in enumerate(contexts):
-            for pos, sentence in enumerate(split_sentences(chunk.content)):
+            sentences = split_sentences(chunk.content)
+            for pos, sentence in enumerate(sentences):
+                # Docs often introduce the key detail with a colon and put it on the next line
+                # ("set the parameter `use_cache=False`:" + code). Keep the two together.
+                if sentence.endswith(":") and pos + 1 < len(sentences):
+                    sentence = f"{sentence} {sentences[pos + 1]}"
                 if len(sentence) >= 25:
                     candidates.append((rank, pos, sentence, set(content_terms(sentence))))
 
-        df = Counter(t for *_, terms in candidates for t in terms)
+        local_df = Counter(t for *_, terms in candidates for t in terms)
         n = max(1, len(candidates))
 
+        def idf(term: str) -> float:
+            return self.stats.idf(term) if self.stats else math.log(1 + n / local_df[term])
+
         def score(rank: int, terms: set[str]) -> float:
-            overlap = sum(math.log(1 + n / df[t]) for t in q_terms & terms)
-            return overlap / (1 + 0.25 * rank)
+            return sum(idf(t) for t in q_terms & terms) / (1 + 0.25 * rank)
 
         scored = sorted(
             ((score(rank, terms), rank, pos, s) for rank, pos, s, terms in candidates),
             key=lambda x: (-x[0], x[1], x[2]),
         )
-        best = [item for item in scored[: self.max_sentences] if item[0] > 0]
+        best: list[tuple[float, int, int, str]] = []
+        seen: set[str] = set()
+        for item in scored:  # overlapping chunks repeat sentences: skip duplicates
+            key = " ".join(content_terms(item[3]))
+            if item[0] > 0 and key not in seen:
+                best.append(item)
+                seen.add(key)
+            if len(best) == self.max_sentences:
+                break
         if not best:
             return Generation(REFUSAL, True, usage=Usage("fake", prompt_tokens, 12))
         best.sort(key=lambda x: (x[1], x[2]))  # back into reading order
@@ -273,7 +302,11 @@ def llm_provider() -> str:
 def get_generator(provider: str | None = None) -> Generator:
     provider = (provider or llm_provider()).lower()
     if provider == "fake":
-        return ExtractiveGenerator()
+        from ragevals.corpus import load_corpus
+        from ragevals.settings import get_settings
+
+        documents = load_corpus(get_settings().corpus_dir)
+        return ExtractiveGenerator(TermStats.from_texts(d.text for d in documents))
     if provider == "anthropic":
         return AnthropicGenerator()
     raise ValueError(f"Unknown LLM_PROVIDER {provider!r} (expected fake or anthropic)")

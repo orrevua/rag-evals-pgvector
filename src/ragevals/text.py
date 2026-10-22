@@ -1,14 +1,20 @@
 """Tiny text utilities shared by the hashing embedder, the rerankers, the fake LLM and the metrics.
 
-Everything here is deliberately simple and dependency-free so you can read it in one sitting.
-Real systems would use a proper tokenizer (e.g. the embedding model's own) and a stemmer
-(e.g. Snowball). The point is to make the offline pipeline *deterministic* and *plausible*.
+Everything here is deliberately simple so you can read it in one sitting.
+Real systems would use the embedding model's own tokenizer; here a regex tokenizer plus the
+Snowball stemmer is enough. The point is a *deterministic* and *plausible* offline pipeline.
 """
 
 from __future__ import annotations
 
+import math
 import re
+from collections import Counter
 from collections.abc import Iterable
+from dataclasses import dataclass
+from functools import lru_cache
+
+import snowballstemmer
 
 _TOKEN_RE = re.compile(r"[a-z0-9]+(?:_[a-z0-9]+)*")
 
@@ -36,19 +42,19 @@ def tokenize(text: str) -> list[str]:
     return tokens
 
 
+_STEMMER = snowballstemmer.stemmer("english")
+
+
+@lru_cache(maxsize=65536)
 def stem(token: str) -> str:
-    """A very light suffix stripper ("parameters" -> "parameter", "validating" -> "validat").
+    """Snowball (Porter2) stemming: "parameters" -> "paramet", "cookies" -> "cooki".
 
     It only needs to be *consistent*: queries and documents go through the same function.
+    It is the same algorithm Postgres uses for ``to_tsvector('english', ...)``.
     """
-    if len(token) <= 4 or "_" in token or token.isdigit():
-        return token
-    for suffix in ("ations", "ation", "ings", "ing", "ies", "ers", "ed", "es", "s"):
-        if token.endswith(suffix) and len(token) - len(suffix) >= 3:
-            if suffix == "ies":
-                return token[: -len(suffix)] + "y"
-            return token[: -len(suffix)]
-    return token
+    if "_" in token or token.isdigit():
+        return token  # identifiers like max_length and numbers stay as they are
+    return _STEMMER.stemWord(token)
 
 
 def content_terms(text: str) -> list[str]:
@@ -75,3 +81,24 @@ def unique(items: Iterable[str]) -> list[str]:
             seen.add(item)
             out.append(item)
     return out
+
+
+@dataclass(frozen=True)
+class TermStats:
+    """Document frequencies over a corpus, for IDF weighting ("how informative is this word?")."""
+
+    df: dict[str, int]
+    n_docs: int
+
+    @classmethod
+    def from_texts(cls, texts: Iterable[str]) -> TermStats:
+        df: Counter[str] = Counter()
+        n = 0
+        for text in texts:
+            df.update(set(content_terms(text)))
+            n += 1
+        return cls(dict(df), n)
+
+    def idf(self, term: str) -> float:
+        # Smoothed IDF: a word in every document scores ~0, a word in no document scores highest.
+        return math.log((self.n_docs + 1) / (self.df.get(term, 0) + 0.5))
